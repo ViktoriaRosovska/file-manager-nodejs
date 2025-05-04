@@ -13,3 +13,7 @@ export function messageCurrentDir(dir) {
 export function messageError() {
     console.log("\nOperation failed");
 }
+
+export function messageInputError() {
+    console.log("Invalid input");
+}

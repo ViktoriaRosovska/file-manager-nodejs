@@ -24,7 +24,14 @@ export const ls = async (currentDir) => {
     return currentDir;
 };
   
-  // Сортировка по алфавиту
-  function sortByName(a, b) {
-    return a.name.localeCompare(b.name);
-  }
+
+export const cd = async (filePath, distPath) => {
+    console.log("distPath", distPath);
+ }
+
+
+ export const up = async (filePath) => {
+    console.log("Up");
+ }
+
+  

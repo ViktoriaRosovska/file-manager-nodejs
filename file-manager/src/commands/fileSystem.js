@@ -1,5 +1,6 @@
 import path from "path";
 import {createReadStream} from "fs";
+import { readdir, writeFile } from "fs/promises";
 
 export const cat = (filePath) => {
     if (!filePath) {
@@ -18,3 +19,22 @@ export const cat = (filePath) => {
     })
     
  };
+
+export const add = async (filePath, name) => {
+        try {
+            const files = await readdir(filePath);
+            console.log(files);
+            for (let file of files){
+                if (file.at(files)) {
+                    console.log(`File with ${name} name already exist`);
+                    return filePath;
+                } 
+            }
+            await writeFile(path.join(filePath, name), "", {flag: "wx"});
+            return filePath;
+        
+        } catch (err) {
+            console.error(err);
+        }
+ }
+
