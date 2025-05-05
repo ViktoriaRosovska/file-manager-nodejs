@@ -1,3 +1,4 @@
+import { messageInputError } from "../utils/messageLog.js";
 import * as fileNavigation from "./fileNavigation.js";
 import * as fileSystem from "./fileSystem.js";
 
@@ -12,7 +13,7 @@ export const processHandler = async (input, currentDir) => {
             return await fileSystem.add(currentDir, args.join(" "));
         }
         case "mkdir": {
-            return console.log("mkdir");
+            return  await fileSystem.fsmkdir(currentDir, args.join(" "));
         }
         case "rn": {
             return console.log("rename file");
@@ -24,16 +25,19 @@ export const processHandler = async (input, currentDir) => {
             return console.log("move file");
         }
         case "rm": {
-            return console.log("remove file");
+            return await fileSystem.rn(args[0], args[1], currentDir);
         }
         case "cd": {
-            return await fileNavigation.cd(currentDir, args[0]);
+            return await fileNavigation.cd(args[0]);
         } 
         case "ls": {
             return await fileNavigation.ls(currentDir);
         }
         case "up": {
             return await fileNavigation.up(currentDir);
+        }
+        default: {
+            messageInputError();
         }
     }
 }
