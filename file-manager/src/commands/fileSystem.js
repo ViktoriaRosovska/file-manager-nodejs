@@ -1,6 +1,6 @@
 import path from "path";
 import {createReadStream, createWriteStream} from "fs";
-import { readdir, writeFile, mkdir, rename, access, stat } from "fs/promises";
+import { readdir, writeFile, mkdir, rename, access, stat, unlink} from "fs/promises";
 import { messageError, messageInputError, messageExistError, messageNotFound, messageFolderError, messageCopyError } from "../utils/messageLog.js";
 
 export const cat = (filePath) => {
@@ -89,6 +89,9 @@ export const rn = async (oldName, newName, filePath) => {
 };
 
 export const cp = async (filename, distDir, currentDir) => {
+    if (!distDir) {
+        messageInputError();
+    }
     const filePath = path.resolve(currentDir, filename);
     const distAbsDir = path.resolve(currentDir, distDir);
     const distPath = path.join(distAbsDir, path.basename(filename));
@@ -115,6 +118,38 @@ export const cp = async (filename, distDir, currentDir) => {
         messageCopyError(filename, err);
     }
     return currentDir;
+}
 
+export const mv = async (filename, distDir, currentDir) => {
+    const filePath = path.resolve(currentDir, filename);
+    if (!filename) {
+        messageNotFound(filename);
+        return currentDir;
+    }
+    if (!distDir) {
+        messageInputError();
+        return currentDir;
+    }
+    try {
+        await cp(filename, distDir, currentDir);
+        await rm(filename, currentDir);
+    } catch (err) {
+        messageError(err);
+    }
+    return currentDir;
+}
 
+export const rm = async(filename, currentDir) => {
+    const filePath = path.resolve(currentDir, filename);
+    if (!filePath) {
+        messageNotFound(filename);
+        return currentDir;
+    }
+    try {
+        await unlink(filePath);
+        console.log(`The file ${filename} was removed from  ${currentDir} folder`);
+    } catch (err) {
+        messageError(err);
+    }
+    return currentDir;
 }

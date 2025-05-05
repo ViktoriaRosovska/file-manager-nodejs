@@ -16,13 +16,13 @@ export const processHandler = async (input, currentDir) => {
             return  await fileSystem.fsmkdir(currentDir, args.join(" "));
         }
         case "rm": {
-            return console.log("rename file");
+            return await fileSystem.rm(args[0], currentDir);
         }
         case "cp": {
             return await fileSystem.cp(args[0], args[1], currentDir);
         }
         case "mv": {
-            return console.log("move file");
+            return await fileSystem.mv(args[0], args[1], currentDir);
         }
         case "rn": {
             return await fileSystem.rn(args[0], args[1], currentDir);
