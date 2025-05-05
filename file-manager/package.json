@@ -1,0 +1,21 @@
+{
+  "name": "file-manager-nodejs",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/ViktoriaRosovska/file-manager-nodejs#readme",
+  "bugs": {
+    "url": "https://github.com/ViktoriaRosovska/file-manager-nodejs/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ViktoriaRosovska/file-manager-nodejs.git"
+  },
+  "license": "ISC",
+  "author": "",
+ "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ./index.js"
+  }
+}

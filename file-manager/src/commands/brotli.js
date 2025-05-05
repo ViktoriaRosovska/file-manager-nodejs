@@ -1,0 +1,99 @@
+    import path from "path";
+    import { promisify } from "util";
+    import { createReadStream, createWriteStream, existsSync, mkdirSync, statSync } from "fs";
+    import { pipeline } from "stream";
+    import { createBrotliCompress, createBrotliDecompress } from "zlib";
+    import { messageError, messageExistError, messageInputError, messageNotFound, messageFileError } from "../utils/messageLog.js";
+    
+    export const compress = async (filename, distDir, currentDir) => {
+        if (!filename) {
+            messageInputError();
+            return currentDir;
+        }
+        const filePath = path.resolve(currentDir, filename);
+        
+        if (!existsSync(filePath)) {
+            messageExistError(filePath);
+            return currentDir;
+        }
+
+        const distDirPath = path.resolve(currentDir, distDir ? distDir : currentDir);
+        
+        if (!existsSync(distDirPath)) {
+            mkdirSync(distDirPath, { recursive: true });
+        }
+    
+        const distFilePath = path.resolve(distDirPath, `${filename}.br`);
+        try {
+            const stats = statSync(distFilePath);
+            if (stats.isDirectory()) {
+                messageFileError(filename);
+                return currentDir;
+            }
+        } catch (err) {
+            messageNotFound(err);
+        }
+    
+        const pipe = promisify(pipeline);
+    
+        try {
+            const stream = createReadStream(filePath);
+            const destination = createWriteStream(distFilePath);
+            const brotli = createBrotliCompress();
+
+            await pipe(stream, brotli, destination);
+    
+            console.log(`File successfully compressed to ${distFilePath}`);
+        } catch (err) {
+            messageError(err);
+        }
+    
+        return currentDir;
+    };
+
+export const decompress = async (filename, distDir, currentDir) => {
+    const filePath = path.resolve(currentDir, filename);
+    if (!filename) {
+        messageInputError();
+        return currentDir;
+    }
+    if (!existsSync(filePath)) {
+        messageExistError();
+        return currentDir;
+    }
+
+    try {
+        const stats = statSync(filePath);
+        if (stats.isDirectory()) {
+            messageFileError(filename);
+            return currentDir;
+        }
+    } catch (err) {
+        messageError(err);
+        return currentDir;
+    }
+
+    const distDirPath = path.resolve(currentDir, distDir ? distDir : currentDir);
+
+    if (!existsSync(distDirPath)) {
+        mkdirSync(distDirPath, { recursive: true });
+    }
+
+    const decompName = path.basename(filename, ".br");
+    const distFilePath = path.join(distDirPath, decompName);
+    const pipe = promisify(pipeline);
+
+    try {
+        await pipe(
+            createReadStream(filePath),
+            createBrotliDecompress(),
+            createWriteStream(distFilePath)
+        );
+
+        console.log(`File successfully decompressed to ${distFilePath}`);
+    } catch (err) {
+        messageError(err);
+    }
+
+    return currentDir;
+};
