@@ -49,7 +49,7 @@ export const processHandler = async (input, currentDir) => {
             return brotli.compress(args[0], args[1], currentDir);
         }
         case "decompress": {
-            return brotli.compress(args[0], args[1], currentDir);
+            return brotli.decompress(args[0], args[1], currentDir);
         }
         default: {
             messageInputError();
