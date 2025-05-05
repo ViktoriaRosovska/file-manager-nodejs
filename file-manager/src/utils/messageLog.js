@@ -21,3 +21,11 @@ export function messageInputError(err) {
 export function messageFolderError(dir) {
     console.log(`${dir} is not a folder`);
 }
+
+export function  messageExistError(name) {
+    console.error(`The file or folder with name ${name} already exist`);
+}
+
+export function messageNotFound(name) {
+    console.error(`The file of folder with name ${name} doesn't exist`);
+}

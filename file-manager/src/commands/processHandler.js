@@ -15,7 +15,7 @@ export const processHandler = async (input, currentDir) => {
         case "mkdir": {
             return  await fileSystem.fsmkdir(currentDir, args.join(" "));
         }
-        case "rn": {
+        case "rm": {
             return console.log("rename file");
         }
         case "cp": {
@@ -24,7 +24,7 @@ export const processHandler = async (input, currentDir) => {
         case "mv": {
             return console.log("move file");
         }
-        case "rm": {
+        case "rn": {
             return await fileSystem.rn(args[0], args[1], currentDir);
         }
         case "cd": {

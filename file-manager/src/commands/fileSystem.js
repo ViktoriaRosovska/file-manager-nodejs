@@ -1,11 +1,11 @@
 import path from "path";
 import {createReadStream} from "fs";
-import { readdir, writeFile, mkdir, rename } from "fs/promises";
-import { messageError, messageInputError } from "../utils/messageLog.js";
+import { readdir, writeFile, mkdir, rename, access } from "fs/promises";
+import { messageError, messageInputError, messageExistError, messageNotFound } from "../utils/messageLog.js";
 
 export const cat = (filePath) => {
     if (!filePath) {
-        throw new Error("Cann't read file. Invaid input");
+        messageInputError();
     }
     
     const fullPath = path.resolve(process.cwd(), filePath);
@@ -27,7 +27,7 @@ export const add = async (filePath, name) => {
             console.log(files);
             for (let file of files){
                 if (file.includes(files)) {
-                    console.log(`File with ${name} name already exist`);
+                    messageExistError(file.name);
                     return filePath;
                 } 
             }
@@ -54,33 +54,37 @@ export const fsmkdir = async (filePath, name) => {
     return filePath;
 } 
 
-export const rn = async (oldName, name, filePath) => {
-    if (!oldName || !name) {
+export const rn = async (oldName, newName, filePath) => {
+    if (!oldName || !newName) {
         messageInputError();
         return filePath;
     }
 
     const oldPath = path.resolve(filePath, oldName);
-    const newPath = path.resolve(path.dirname(oldPath), name);
+    const newPath = path.resolve(path.dirname(oldPath), newName);
 
     try {
-        await fs.access(oldPath); // Проверка, существует ли старый файл
+        await access(oldPath);
     } catch {
-        messageError(`Файл или папка "${oldName}" не найдены`);
+        messageNotFound(oldName);
         return filePath;
     }
+
     try {
-        await fs.access(newPath); // Проверка, существует ли уже новое имя
-        messageError(`Файл или папка с именем "${name}" уже существует`);
+        await access(newPath);
+        messageExistError(newName);
         return filePath;
     } catch {
-        // Всё ок — целевого файла пока нет
+        messageInputError();
     }
+
     try {
         await rename(oldPath, newPath);
-        console.log(`Переименовано: ${oldName} → ${name}`);
+        console.log(`Rename: ${oldName} in ${newName}`);
     } catch (err) {
         messageError(err);
     }
+
     return filePath;
-}
+};
+
