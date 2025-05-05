@@ -3,6 +3,7 @@ import * as fileNavigation from "./fileNavigation.js";
 import * as fileSystem from "./fileSystem.js";
 import * as hashFile from "./hashFile.js";
 import * as osSystem from "./osSystem.js";
+import * as brotli from "./brotli.js";
 
 export const processHandler = async (input, currentDir) => {
     const [command, ...args] = input.split(" ");
@@ -43,6 +44,12 @@ export const processHandler = async (input, currentDir) => {
         }
         case "os": {
             return osSystem.osSys(args[0], currentDir);
+        }
+        case "compress": {
+            return brotli.compress(args[0], args[1], currentDir);
+        }
+        case "decompress": {
+            return brotli.compress(args[0], args[1], currentDir);
         }
         default: {
             messageInputError();
