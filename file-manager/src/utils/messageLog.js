@@ -37,3 +37,7 @@ export function messageNotFound(name) {
 export function messageCopyError(file, err) {
     console.error(`Error in copy file ${file} ${err ? ": " + err.message : ""}`);
 }
+
+export function messageHashError(err) {
+    console.error(`Error with hash process:`, err.message);
+}

@@ -99,7 +99,7 @@ export const cp = async (filename, distDir, currentDir) => {
     try {
         await access(filePath);
         const statFolder = await stat(distAbsDir);
-        if (!statFolder.isDirectory) {
+        if (!statFolder.isDirectory()) {
             messageFolderError();
             return currentDir;
         }

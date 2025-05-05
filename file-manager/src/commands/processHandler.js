@@ -1,6 +1,7 @@
 import { messageInputError } from "../utils/messageLog.js";
 import * as fileNavigation from "./fileNavigation.js";
 import * as fileSystem from "./fileSystem.js";
+import * as hashFile from "./hashFile.js";
 
 export const processHandler = async (input, currentDir) => {
     const [command, ...args] = input.split(" ");
@@ -35,6 +36,9 @@ export const processHandler = async (input, currentDir) => {
         }
         case "up": {
             return await fileNavigation.up(currentDir);
+        }
+        case "hash": {
+            return await hashFile.hash(args[0], args[1], currentDir);
         }
         default: {
             messageInputError();
