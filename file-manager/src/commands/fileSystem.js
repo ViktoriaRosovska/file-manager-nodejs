@@ -1,7 +1,7 @@
 import path from "path";
-import {createReadStream} from "fs";
-import { readdir, writeFile, mkdir, rename, access } from "fs/promises";
-import { messageError, messageInputError, messageExistError, messageNotFound } from "../utils/messageLog.js";
+import {createReadStream, createWriteStream} from "fs";
+import { readdir, writeFile, mkdir, rename, access, stat } from "fs/promises";
+import { messageError, messageInputError, messageExistError, messageNotFound, messageFolderError, messageCopyError } from "../utils/messageLog.js";
 
 export const cat = (filePath) => {
     if (!filePath) {
@@ -88,3 +88,33 @@ export const rn = async (oldName, newName, filePath) => {
     return filePath;
 };
 
+export const cp = async (filename, distDir, currentDir) => {
+    const filePath = path.resolve(currentDir, filename);
+    const distAbsDir = path.resolve(currentDir, distDir);
+    const distPath = path.join(distAbsDir, path.basename(filename));
+    
+    try {
+        await access(filePath);
+        const statFolder = await stat(distAbsDir);
+        if (!statFolder.isDirectory) {
+            messageFolderError();
+            return currentDir;
+        }
+        const createReadStr = createReadStream(filePath);
+        const createWriteStr = createWriteStream(distPath);
+
+        await new Promise((res, rej) => {
+            createReadStr.on("error", rej);
+            createWriteStr.on("error", rej).on("finish", res);
+
+            createReadStr.pipe(createWriteStr);
+        });
+        console.log("File was successful copied");
+        
+    } catch (err) {
+        messageCopyError(filename, err);
+    }
+    return currentDir;
+
+
+}

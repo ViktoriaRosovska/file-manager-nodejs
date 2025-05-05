@@ -19,7 +19,7 @@ export const processHandler = async (input, currentDir) => {
             return console.log("rename file");
         }
         case "cp": {
-            return console.log("copy file");
+            return await fileSystem.cp(args[0], args[1], currentDir);
         }
         case "mv": {
             return console.log("move file");
